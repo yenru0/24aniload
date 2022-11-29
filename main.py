@@ -1,4 +1,6 @@
+import os
 import urllib.request
+
 
 HEADERS = headers = {
     "Connection" : "keep-alive",
@@ -16,22 +18,51 @@ HEADERS = headers = {
     "Accept-Language" : "ko-KR,ko;q=0.9"
     }
 
-URL = "https://cdn11-xdoodle.xyz/cdn/down/10ae8508e72c9b1b9a70b75655d51d69/Video/1080p/1080p_{}.aaa"
+
+uuid = "362250m4"
+# URL = "https://cdn11-xdoodle.xyz/cdn/down/10ae8508e72c9b1b9a70b75655d51d69/Video/1080p/1080p_{}.aaa"
+
+# TYPE = "ani24"
+TYPE = "linkkf"
+if TYPE == "ani24":
+    URL = "https://cdn11-xdoodle.xyz/cdn/down/%s/Video/1080p/1080p_{}.aaa"%(uuid)
+elif TYPE == "linkkf":
+    URL = "https://k32gg.ani69.com/k32/%s/%s-{}.html"%(uuid, uuid)
+
 OUTFILE = "./loc/{}.ts"
 
 
 
 def download(index):
-    index_text = "%03d"%(index)
-    url = URL.format(index_text)
-    of = OUTFILE.format(index_text)
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req) as response, open(of, 'wb') as f:
-        data = response.read() # a `bytes` object
-        f.write(data)
+    _ret = True
+    if TYPE == "ani24":
+        index_text = "%03d"%(index)
+        url = URL.format(index_text)
+        of = OUTFILE.format(index_text)
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req) as response, open(of, 'wb') as f:
+            data = response.read() # a `bytes` object
+            f.write(data)
+    elif TYPE == "linkkf":
+        index_text = "%04d"%(index)
+        url = URL.format(index_text)
+        of = OUTFILE.format(index_text)
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req) as response, open(of, 'wb') as f:
+            data = response.read()
+            _ret = bool(data)
+            f.write(data)
+    return _ret
+
+if __name__ == '__main__':
+    if not os.path.isdir('loc'):
+        os.mkdir("loc")
 
 index = 0
 while True:
-    download(index)
+    print(index)
+    if not download(index):
+        break
     index += 1
+print('cut')
     
